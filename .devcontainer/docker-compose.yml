@@ -1,0 +1,65 @@
+name: wp-dev
+services:
+  wordpress:
+    build: ./
+    ports:
+      - ${WP_PORT:-8080}:80
+    depends_on:
+      - db
+      - mailhog
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:-db}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-wp_user}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wp_pass}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-wordpress}
+      WORDPRESS_DEBUG: ${WP_DEBUG:-1}
+      WP_HOME: ${WP_HOME:-http://localhost:8080}
+      WP_SITEURL: ${WP_SITEURL:-${WP_HOME:-http://localhost:8080}}
+      WP_ENVIRONMENT_TYPE: ${WP_ENVIRONMENT_TYPE:-development}
+      TABLE_PREFIX: ${TABLE_PREFIX:-wp_}
+      THEME_SLUG: ${THEME_SLUG:-my-theme}
+      PLUGIN_SLUG: ${PLUGIN_SLUG:-my-plugin}
+      SITE_TITLE: ${SITE_TITLE:-Dev Site}
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-password}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@localhost.com}
+      WP_PLUGINS: ${WP_PLUGINS:-advanced-custom-fields}
+      WP_RESET: ${WP_RESET:-false}
+      AUTH_KEY: ${AUTH_KEY:-change-me-AUTH_KEY}
+      SECURE_AUTH_KEY: ${SECURE_AUTH_KEY:-change-me-SECURE_AUTH_KEY}
+      LOGGED_IN_KEY: ${LOGGED_IN_KEY:-change-me-LOGGED_IN_KEY}
+      NONCE_KEY: ${NONCE_KEY:-change-me-NONCE_KEY}
+      AUTH_SALT: ${AUTH_SALT:-change-me-AUTH_SALT}
+      SECURE_AUTH_SALT: ${SECURE_AUTH_SALT:-change-me-SECURE_AUTH_SALT}
+      LOGGED_IN_SALT: ${LOGGED_IN_SALT:-change-me-LOGGED_IN_SALT}
+      NONCE_SALT: ${NONCE_SALT:-change-me-NONCE_SALT}
+    volumes:
+      - wordpress:/var/www/html
+      - ../src/themes/${THEME_SLUG:-my-theme}:/var/www/html/wp-content/themes/${THEME_SLUG:-my-theme}:cached
+      - ../src/plugins/${PLUGIN_SLUG:-my-plugin}:/var/www/html/wp-content/plugins/${PLUGIN_SLUG:-my-plugin}:cached
+      - ../src/wp-config.php:/var/www/html/wp-config.php:cached
+ 
+  db:
+    image: mariadb:10.11
+    environment:
+      MYSQL_DATABASE: ${WORDPRESS_DB_NAME:-wordpress}
+      MYSQL_USER: ${WORDPRESS_DB_USER:-wp_user}
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wp_pass}
+      MYSQL_RANDOM_ROOT_PASSWORD: ${MYSQL_RANDOM_ROOT_PASSWORD:-1}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - data:/var/lib/mysql
+
+  mailhog:
+    # image: mailhog/mailhog:v1.0.1
+    image: 'jcalonso/mailhog:latest' # jcalonso/mailhog:latest is a custom image that is built for arm64 processors (M1/M2/M3/M4/M5/etc.) see: https://github.com/mailhog/MailHog/issues/359
+    ports:
+      - ${MAILHOG_PORT:-8025}:8025
+
+volumes:
+  wordpress:
+  data:
