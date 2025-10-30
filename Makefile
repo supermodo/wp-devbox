@@ -1,4 +1,4 @@
-PROJECT?=wp-dev
+PROJECT?=wp-devbox
 COMPOSE=docker compose -p $(PROJECT) -f .devcontainer/docker-compose.yml
 SERVICE=wordpress
 
@@ -14,7 +14,7 @@ SERVICE=wordpress
 
 help:
 	@echo "╔════════════════════════════════════════════════════════════════════╗"
-	@echo "║                     WP-DEV Project Commands                        ║"
+	@echo "║                    WP-DEVBOX Makefile Commands                     ║"
 	@echo "╚════════════════════════════════════════════════════════════════════╝"
 	@echo ""
 	@echo "\033[1;33m┌─ Project Setup & Maintenance \033[0m"

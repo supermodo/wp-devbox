@@ -1,4 +1,4 @@
-name: wp-dev
+name: wp-devbox
 services:
   wordpress:
     build: ./

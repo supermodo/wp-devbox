@@ -239,7 +239,7 @@ work.
 ### Add upstream and rebase periodically
 
 ```bash
-git remote add upstream https://github.com/<template-owner>/<template-repo>.git
+git remote add upstream https://github.com/supermodo/wp-devbox.git
 git fetch upstream
 git rebase upstream/master   # or: git pull --rebase upstream master
 ```
