@@ -46,8 +46,4 @@ if [ -d "${DEVDIR}/data" ]; then
     done
 fi
 
-# auto-activate theme and plugin if present
-[ -f "wp-content/themes/${THEME_SLUG:-my-theme}/style.css" ] && wp theme activate "${THEME_SLUG:-my-theme}" || true
-[ -d "wp-content/plugins/${PLUGIN_SLUG:-my-plugin}" ] && wp plugin activate "${PLUGIN_SLUG:-my-plugin}" || true
-
 echo "WordPress setup complete"
