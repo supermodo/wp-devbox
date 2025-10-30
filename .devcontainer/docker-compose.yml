@@ -3,10 +3,17 @@ services:
   wordpress:
     build: ./
     ports:
-      - ${WP_PORT:-8080}:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
     depends_on:
-      - db
-      - mailhog
+      db:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
     environment:
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:-db}
       WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-wp_user}
@@ -37,7 +44,7 @@ services:
       - wordpress:/var/www/html
       - ../src/themes/${THEME_SLUG:-my-theme}:/var/www/html/wp-content/themes/${THEME_SLUG:-my-theme}:cached
       - ../src/plugins/${PLUGIN_SLUG:-my-plugin}:/var/www/html/wp-content/plugins/${PLUGIN_SLUG:-my-plugin}:cached
-      - ../src/wp-config.php:/var/www/html/wp-config.php:cached
+      - .:/workspace/.devcontainer:cached
  
   db:
     image: mariadb:10.11

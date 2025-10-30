@@ -5,8 +5,11 @@ echo "Setting up WordPress"
 DEVDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 cd /var/www/html
 
-# wait for DB to be ready
-until wp db check >/dev/null 2>&1; do sleep 2; done
+# Check if WordPress is already set up
+if [ -f wp-config.php ] && wp core is-installed 2>/dev/null; then
+    echo "WordPress is already installed, skipping setup"
+    exit 0
+fi
 
 # optional reset
 if [ "${WP_RESET:-false}" = true ]; then

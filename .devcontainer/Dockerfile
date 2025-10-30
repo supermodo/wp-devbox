@@ -82,6 +82,13 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 RUN useradd -ms /bin/bash vscode \
 		&& usermod -aG www-data vscode
 
+# Install sudo and supervisor and allow vscode user to run commands as www-data
+RUN apt-get update \
+    && apt-get install -y sudo supervisor \
+    && echo "vscode ALL=(www-data) NOPASSWD: ALL" >> /etc/sudoers \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/log/supervisor
+
 # Ensure WP-CLI uses a writable home/cache and more memory
 ENV HOME=/var/www/html \
     WP_CLI_CACHE_DIR=/var/www/html/.wp-cli/cache \
@@ -104,3 +111,7 @@ USER root
 RUN chown -R www-data:www-data /var/www/html/
 RUN chmod g+w -R /var/www/html/
 RUN find /var/www/html/ -type d -exec chmod g+s {} \;
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
