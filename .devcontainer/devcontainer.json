@@ -3,17 +3,21 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "wordpress",
 	"workspaceFolder": "/var/www/html",
-	"settings": {
-		"terminal.integrated.shell.linux": "/bin/bash",
-		"php.suggest.basic": false // avoids duplicate autocomplete
+	"shutdownAction": "none",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"php.suggest.basic": false
+			}
+		}
 	},
-	// Add the IDs of any extensions you want installed.
 	"extensions": [
 		"xdebug.php-debug",
 		"bmewburn.vscode-intelephense-client",
 		"wordpresstoolbox.wordpress-toolbox",
 		"johnbillion.vscode-wordpress-hooks"
 	],
-	"postCreateCommand": ".devcontainer/wp-setup.sh",
-	"remoteUser": "vscode"
+	"postCreateCommand": "sudo -u www-data bash /workspace/.devcontainer/wp-setup.sh",
+	"remoteUser": "vscode",
+	"overrideCommand": false
 }

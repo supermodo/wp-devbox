@@ -7,6 +7,7 @@ services:
     tty: true
     restart: unless-stopped
     ports:
+      - 127.0.0.1:${WP_PORT:-8080}:80
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
@@ -66,10 +67,10 @@ services:
       - data:/var/lib/mysql
 
   mailhog:
-    # image: mailhog/mailhog:v1.0.1
+    # image: mailhog/mailhog:v1.0.1 # this is the official image from mailhog. It works for x86_64 processors (Intel/AMD)
     image: 'jcalonso/mailhog:latest' # jcalonso/mailhog:latest is a custom image that is built for arm64 processors (M1/M2/M3/M4/M5/etc.) see: https://github.com/mailhog/MailHog/issues/359
     ports:
-      - ${MAILHOG_PORT:-8025}:8025
+      - 127.0.0.1:${MAILHOG_PORT:-8025}:8025
 
 volumes:
   wordpress:
